@@ -1,0 +1,22 @@
+{
+  "name": "travlog-ai",
+  "version": "1.0.0",
+  "description": "AI-powered trip planner and travel journal — plan itineraries, log adventures, and track travel stats",
+  "type": "module",
+  "main": "src/worker.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "build": "tsc --noEmit"
+  },
+  "dependencies": {
+    "cocapn-protocols": "file:../cocapn/packages/protocols"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231218.0",
+    "typescript": "^5.3.3",
+    "wrangler": "^3.24.0"
+  },
+  "engines": { "node": ">=18" },
+  "license": "MIT"
+}
