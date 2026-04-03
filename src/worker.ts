@@ -4,7 +4,7 @@ import { loadBYOKConfig, callLLM, saveBYOKConfig, generateSetupHTML, type BYOKCo
 import { softActualize, confidenceScore } from './lib/soft-actualize.ts';
 
 export interface Env {
-  MEMORY: KVNamespace;
+  TRAVLOG_KV: KVNamespace;
   AGENT_NAME?: string;
   AGENT_TONE?: string;
   AGENT_AVATAR?: string;
@@ -19,12 +19,12 @@ const ACCENT = '#0ea5e9';
 // ── Domain Data Layer ──
 
 async function getItems(env: Env, userId: string): Promise<any[]> {
-  const raw = await env.MEMORY.get(`${userId}:${DOMAIN}`, 'json');
+  const raw = await env.TRAVLOG_KV.get(`${userId}:${DOMAIN}`, 'json');
   return Array.isArray(raw) ? raw : [];
 }
 
 async function saveItems(env: Env, userId: string, items: any[]): Promise<void> {
-  await env.MEMORY.put(`${userId}:${DOMAIN}`, JSON.stringify(items));
+  await env.TRAVLOG_KV.put(`${userId}:${DOMAIN}`, JSON.stringify(items));
 }
 
 async function getItem(env: Env, userId: string, id: string): Promise<any | null> {
@@ -212,7 +212,7 @@ export default {
       if (path === `/api/${DOMAIN}` && request.method === 'GET') {
         const userId = await getUserId(request, env);
         const items = await getItems(env, userId);
-        return Response.json({ : items, count: items.length });
+        return Response.json({ items, count: items.length });
       }
 
       // Domain CRUD: POST /api/trips
@@ -220,7 +220,7 @@ export default {
         const userId = await getUserId(request, env);
         const data = await request.json();
         const item = await createItem(env, userId, data);
-        return Response.json({ : item }, { status: 201 });
+        return Response.json({ item }, { status: 201 });
       }
 
       // Domain CRUD: GET /api/trips/:id
@@ -231,12 +231,12 @@ export default {
 
         if (request.method === 'GET') {
           const item = await getItem(env, userId, id);
-          return item ? Response.json({ : item }) : Response.json({ error: 'Not found' }, { status: 404 });
+          return item ? Response.json({ item }) : Response.json({ error: 'Not found' }, { status: 404 });
         }
         if (request.method === 'PATCH') {
           const data = await request.json();
           const item = await updateItem(env, userId, id, data);
-          return item ? Response.json({ : item }) : Response.json({ error: 'Not found' }, { status: 404 });
+          return item ? Response.json({ item }) : Response.json({ error: 'Not found' }, { status: 404 });
         }
         if (request.method === 'DELETE') {
           const deleted = await deleteItem(env, userId, id);
