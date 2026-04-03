@@ -150,7 +150,14 @@ export default {
     }
 
     // Setup wizard
-    if (path === '/setup') {
+    if (path === '/api/efficiency' && request.method === 'GET') {
+    return new Response(JSON.stringify({
+      totalCached: 0, totalHits: 0, cacheHitRate: 0, tokensSaved: 0,
+      repo: 'travlog-ai', timestamp: Date.now()
+    }), { headers: { 'Content-Type': 'application/json', ...corsHeaders() } });
+  }
+
+  if (path === '/setup') {
       return new Response(generateSetupHTML(AGENT_NAME, ACCENT), { headers: { 'Content-Type': 'text/html' } });
     }
 
